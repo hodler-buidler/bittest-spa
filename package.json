@@ -1,0 +1,35 @@
+{
+  "name": "bittest-spa",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "proxy": "lcp --proxyUrl https://api.binance.com",
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "core-js": "^3.6.5",
+    "lodash": "^4.17.19",
+    "reset-css": "^5.0.1",
+    "resize-observer-polyfill": "^1.5.1",
+    "vue": "^2.6.11",
+    "vue-custom-scrollbar": "^1.2.0",
+    "vue-router": "^3.2.0",
+    "vuex": "^3.4.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^4.4.0",
+    "@vue/cli-service": "^4.4.0",
+    "local-cors-proxy": "^1.1.0",
+    "path": "^0.12.7",
+    "sass": "^1.26.5",
+    "sass-loader": "^8.0.2",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
