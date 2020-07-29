@@ -9,8 +9,7 @@ const SET_DIFF_STREAM_CONNECTION = 'SET_DIFF_STREAM_CONNECTION';
 const SET_PREV_PROCESSED_DIFF_DATA = 'SET_PREV_PROCESSED_DIFF_DATA';
 
 const SET_LAST_UPDATED_ID = 'SET_LAST_UPDATED_ID';
-const UPDATE_ASKS = 'UPDATE_ASKS';
-const UPDATE_BIDS = 'UPDATE_BIDS';
+const UPDATE_ENTITIES = 'UPDATE_ENTITIES';
 
 export default new Vuex.Store({
   state: {
@@ -78,44 +77,24 @@ export default new Vuex.Store({
       state.symbolData.lastUpdateId = id;
     },
 
-    // @todo bids and asks mutations DRY?
-    [UPDATE_ASKS] (state, asks) {
-      asks.forEach(diffAsk => {
-        var [diffPrice, diffQuantity] = diffAsk;
+    // Update asks or bids with new record/record mutations
+    [UPDATE_ENTITIES] (state, {entityName, entities}) {
+      entities.forEach(diffEntity => {
+        var [diffPrice, diffQuantity] = diffEntity;
 
-        var matchedAskIndex = state.symbolData.asks.findIndex(([price]) => {
-          return price === diffPrice;
-        });
+        var matchedEntityIndex = state.symbolData[entityName].findIndex(([price]) => price === diffPrice);
 
-        if (matchedAskIndex >= 0) {
+        // If correlating entity found
+        if (matchedEntityIndex >= 0) {
           if (+diffQuantity === 0) {
-            state.symbolData.asks.splice(matchedAskIndex, 1);
+            // Remove entity if q == 0
+            state.symbolData[entityName].splice(matchedEntityIndex, 1);
           } else {
-            state.symbolData.asks.splice(matchedAskIndex, 1, diffAsk);
+            // Replace old entity with fresh one
+            state.symbolData[entityName].splice(matchedEntityIndex, 1, diffEntity);
           }
-        } else if (+diffQuantity > 0) {
-          state.symbolData.asks.unshift(diffAsk);
-        }
-
-      });
-    },
-    
-    [UPDATE_BIDS] (state, bids) {
-      bids.forEach(diffBid => {
-        var [diffPrice, diffQuantity] = diffBid;
-
-        var matchedBidIndex = state.symbolData.bids.findIndex(([price]) => {
-          return price === diffPrice;
-        });
-
-        if (matchedBidIndex >= 0) {
-          if (+diffQuantity === 0) {
-            state.symbolData.bids.splice(matchedBidIndex, 1);
-          } else {
-            state.symbolData.bids.splice(matchedBidIndex, 1, diffBid);
-          }
-        } else if (+diffQuantity > 0) {
-          state.symbolData.bids.unshift(diffBid);
+        } else if (+diffQuantity > 0) { // If it's a unique entity
+          state.symbolData[entityName].unshift(diffEntity); 
         }
 
       });
@@ -168,12 +147,12 @@ export default new Vuex.Store({
     },
     updateAsks({ commit, getters }, asks) {
       if (asks.length && getters.isSymbolDataInitialized) {
-        commit(UPDATE_ASKS, asks);
+        commit(UPDATE_ENTITIES, {entityName: 'asks', entities: asks});
       }
     },
     updateBids({ commit, getters }, bids) {
       if (bids.length && getters.isSymbolDataInitialized) {
-        commit(UPDATE_BIDS, bids);
+        commit(UPDATE_ENTITIES, {entityName: 'bids', entities: bids});
       }
     },
     updateLastUpdatedId({ commit, getters }, id) {
