@@ -10,6 +10,7 @@
 </template>
 
 <script>
+    import { mapGetters, mapActions } from 'vuex';
     import SymbolDiffChangesItem from '@/components/SymbolDiffChanges/SymbolDiffChangesItem';
 
     export default {
@@ -19,14 +20,20 @@
             return {
                 diffChangeSubscribeKey: Math.random(),
                 symbolChangeSubscribeKey: Math.random(),
-                diffWebsocket: null,
                 diffStack: [],
             }
         },
+        computed: {
+            ...mapGetters([
+                'isDiffStreamActive',
+            ]),
+        },
         methods: {
-            trackDiffChanges({ws, data}) {
-                this.diffWebsocket = ws;
+            ...mapActions([
+                'closeDiffStream',
+            ]),
 
+            trackDiffChanges(data) {
                 // First load
                 if (!this.diffStack.length) {
                     this.emitDataExistsEvent(true);    
@@ -36,9 +43,8 @@
             },
 
             clearDiffHistory() {
-                if (this.diffWebsocket) {
-                    this.diffWebsocket.close();
-                    this.diffWebsocket = null;
+                if (this.isDiffStreamActive) {
+                    this.closeDiffStream();
                     this.diffStack = [];
                     this.emitDataExistsEvent(false); 
                 }
