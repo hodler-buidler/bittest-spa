@@ -7,12 +7,7 @@ var SdkPlugin = {
      */
     async getOrdersBook(symbol, limit = 500) {
         try {
-            var response = await http.get('/api/v3/depth', {
-                params: {
-                    symbol,
-                    limit,
-                }
-            });
+            var response = await http.get(`/api/v3/depth?symbol=${symbol}&limit=${limit}`);
 
             return response.data;
         } catch (error) {

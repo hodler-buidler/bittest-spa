@@ -1,15 +1,11 @@
 import axios from 'axios';
 
-if (process.env.NODE_ENV === 'development') {
-    var baseUrl = 'http://localhost:8010/proxy';
-} else var baseUrl = 'https://api.binance.com';
+const baseUrl = 'https://api.binance.com';
+const proxyToAvoidCors = 'https://cors.nikitosgolubev.workers.dev/corsproxy/?apiurl=';
 
 
 var instance = axios.create({
-    baseURL: baseUrl,
-    headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-    },
+    baseURL: proxyToAvoidCors+baseUrl,
 });
 
 export default instance;
