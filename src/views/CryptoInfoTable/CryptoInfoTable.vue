@@ -1,38 +1,32 @@
 <template>
     <div>
-        <div class="crypto-table-container" v-if="tableRows.length > 0">
+        <div v-if="isDataLoaded" class="crypto-table-container">
             <div>
                 <div class="crypto-table-container__title">
                     <h3>Symbol: {{ activeSymbol }}</h3>
                 </div>
 
-                <base-table class="crypto-table-container__table" headersFixed :headers="tableHeaders" :rows="tableRows">
-                    <template v-slot:fixed-header="slotProps">
-                        <span>{{ slotProps.header }}</span>
-                    </template>
-
-                    <template v-slot:default="slotProps">
-                        <span>{{ slotProps.cell }}</span>
-                    </template>
-                </base-table>
+                <symbol-book-table class="crypto-table-container__table" />
             </div>
+        </div>
+        <div v-else>
+            <div class="loading-sign">Loading ...</div>
         </div>
     </div>
 </template>
 
 <script>
-    import BaseTable from '@/components/BaseTable/BaseTable';
+    import SymbolBookTable from '@/components/SymbolBookTable/SymbolBookTable';
     import { mapGetters, mapActions, mapState } from 'vuex';
 
     export default {
         name: "CryptoInfoTable",
-        components: {BaseTable},
+        components: {SymbolBookTable},
         data() {
             return {
                 activeSymbol: null,
+                isDataLoaded: false,
                 activeSymbolSubscribeKey: Math.random(),
-                showTotalMedia: null,
-                showTotal: true,
             }
         },
         computed: {
@@ -42,38 +36,7 @@
 
             ...mapGetters([
                 'isSymbolDataInitialized',
-                'getAsks',
-                'getBids',
             ]),
-
-            tableHeaders() {
-                var headers = [];
-                headers.push('Amount');
-                headers.push('Price');
-
-                if (this.showTotal) headers.push('Total');
-
-                headers.push('Amount');
-                headers.push('Price');
-
-                if (this.showTotal) headers.push('Total');
-
-                return headers;
-            },
-
-            tableRows() {
-                var rows = [];
-
-                if (this.isSymbolDataInitialized) {
-                    let bids = this.getBids;
-                    let asks = this.getAsks;
-
-                    this.insertBidsAtTableRows(bids, rows);
-                    this.insertAsksAtTableRows(asks, rows);
-                }
-
-                return rows;
-            },
         },
         methods: {
             ...mapActions([
@@ -82,38 +45,12 @@
             ]),
 
             async loadSymbolData() {
+                this.isDataLoaded = false;
                 if (!this.isSymbolDataInitialized) {
                     let symbolData = await this.$core.sdk.getOrdersBook(this.activeSymbol);
                     if (symbolData) this.setSymbolData(symbolData);
                 }
-            },
-
-            getTotal(price, amount) {
-                return price * amount;
-            },
-
-            insertBidsAtTableRows(bids, rows) {
-                bids.forEach(([price, amount]) => {
-                    var row = [amount, price]
-                    if (this.showTotal) row.push(this.getTotal(price, amount));
-                    rows.push(row);
-                });
-            },
-
-            insertAsksAtTableRows(asks, rows) {
-                asks.forEach(([price, amount], index) => {
-                    // If row contains ask cells before
-                    if (rows[index]) {
-                        rows[index].push(amount);
-                        rows[index].push(price);
-                        if (this.showTotal) rows[index].push(this.getTotal(price, amount));
-                    } else {
-                        /** @todo think about refactoring this solution */
-                        let row = ['', '', '', amount, price]; // '' to compensate possible empty ask cells
-                        if (this.showTotal) row.push(this.getTotal(price, amount));
-                        rows.push(row);
-                    }
-                });
+                this.isDataLoaded = true;
             },
 
             updateActiveSymbol(symbol) {
@@ -122,17 +59,9 @@
                     this.loadSymbolData();
                 }
             },
-
-            toggleShowTotal(media) {
-                this.showTotal = media.matches;
-            },
         },
         created() {
             this.updateActiveSymbol(this.$store.state.activeSymbol);
-
-            this.showTotalMedia = window.matchMedia('(min-width: 840px)');
-            this.showTotalMedia.addListener(this.toggleShowTotal);
-            this.toggleShowTotal(this.showTotalMedia);
 
             this.$core.observer.subscribe(
                 'active-symbol-changed',
@@ -141,8 +70,6 @@
             );
         },
         destroyed() {
-            this.showTotalMedia.removeListener(this.toggleShowTotal);
-
             this.$core.observer.unsubscribe(
                 'active-symbol-changed',
                 this.updateActiveSymbol,
@@ -178,5 +105,12 @@
                 font-size: 0.6rem;
             }
         }
+    }
+
+    .loading-sign {
+        font-size: 5rem;
+        text-align: center;
+        color: $primary;
+        padding: 50px 0;
     }
 </style>

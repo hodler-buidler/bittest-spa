@@ -22,70 +22,8 @@ export default {
 </script>
 
 <style lang="scss">
-  @import "reset-css";
-  @import "~assets/scss/fonts";
+  @import "~assets/scss/core";
 
-  body, html {
-    font-size: 20px;
-    font-family: $font-regular, sans-serif;
-    color: $default;
-
-    @media screen and (max-width: 768px) {
-      font-size: 16px;
-    }
-  }
-
-  a {
-    text-decoration: none;
-    color: $default;
-  }
-
-  h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6  {
-    font-family: $font-bold, sans-serif;
-  }
-
-  h1, .h1 {
-    font-size: 2.3rem;
-  }
-
-  h2, .h2 {
-    font-size: 2rem;
-    line-height: 1.1;
-  }
-
-  h3, .h3 {
-    font-size: 1.5rem;
-    line-height: 1.1;
-  }
-
-  h4, .h4 {
-    font-size: 1.25rem;
-    line-height: 1.2;
-  }
-
-  .link {
-    color: $alternative;
-    transition: 0.3s all;
-    cursor: pointer;
-
-    &:hover, &_active {
-      color: darken($alternative, 15%);
-    }
-
-    &:active {
-      opacity: 0.5;
-    }
-  }
-
-  .separator {
-    height: 2px;
-    width: 100%;
-    background: $secondary;
-  }
-</style>
-
-
-<style lang="scss">
   .page {
     background: $light;
     min-height: 100vh;

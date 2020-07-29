@@ -12,7 +12,7 @@ const routes = [
   {
     path: '/currencies',
     name: 'currencies',
-    component: () => import(/* webpackChunkName: "currency-choice" */ '@/views/CurrencyChoice/CurrencyChoice.vue'),
+    component: () => import(/* webpackChunkName: "currency-details" */ '@/views/CurrencyDetails/CurrencyDetails.vue'),
   },
 ];
 

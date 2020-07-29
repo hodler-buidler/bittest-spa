@@ -12,7 +12,7 @@
             </router-link>
 
             <router-link :to="{name: 'currencies'}" class="link page-nav__item" exact-active-class="link_active">
-                <span>Currency select</span>
+                <span>Currency details</span>
             </router-link>
         </nav>
     </div>
