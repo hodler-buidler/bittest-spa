@@ -93,6 +93,8 @@ export default new Vuex.Store({
           } else {
             state.symbolData.asks.splice(matchedAskIndex, 1, diffAsk);
           }
+        } else if (+diffQuantity > 0) {
+          state.symbolData.asks.unshift(diffAsk);
         }
 
       });
@@ -112,6 +114,8 @@ export default new Vuex.Store({
           } else {
             state.symbolData.bids.splice(matchedBidIndex, 1, diffBid);
           }
+        } else if (+diffQuantity > 0) {
+          state.symbolData.bids.unshift(diffBid);
         }
 
       });
@@ -136,14 +140,13 @@ export default new Vuex.Store({
       context.commit(SET_PREV_PROCESSED_DIFF_DATA, null);
     },
     publishDiffUpdates({commit, state, getters, dispatch}, core) {
-      console.log("PASSED 1");
       if (getters.isDiffStreamActive && getters.isSymbolDataInitialized) {
-        console.log("PASSED 2");
         state.diffStreamConnection.onmessage = (messageEvent) => {
           var data = JSON.parse(messageEvent.data);
 
           // Drop any event where u is <= lastUpdateId in the snapshot.
           if (data.u <= getters.getLastUpdateId) return;
+
           // The first processed event should have U <= lastUpdateId+1 AND u >= lastUpdateId+1.
           if (getters.isFirstProcessedDiffEvent) {
             if (data.U > (getters.getLastUpdateId + 1) || data.u < (getters.getLastUpdateId + 1)) return;
@@ -159,7 +162,7 @@ export default new Vuex.Store({
 
           dispatch('updateAsks', data.a);
           dispatch('updateBids', data.b);
-          // dispatch('updateLastUpdatedId', data.u); not sure whether should it be done or not.
+          dispatch('updateLastUpdatedId', data.u);
         };
       }
     },
