@@ -36,6 +36,7 @@
 
             ...mapGetters([
                 'isSymbolDataInitialized',
+                'getLastUpdateId',
             ]),
         },
         methods: {
@@ -49,6 +50,7 @@
                 if (!this.isSymbolDataInitialized) {
                     let symbolData = await this.$core.sdk.getOrdersBook(this.activeSymbol);
                     if (symbolData) this.setSymbolData(symbolData);
+                    this.runWebsocketStream();
                 }
                 this.isDataLoaded = true;
             },
@@ -59,6 +61,19 @@
                     this.loadSymbolData();
                 }
             },
+
+            runWebsocketStream() {
+                var ws = this.$core.sdk.getOrdersWebsocketInstance(this.activeSymbol);
+
+                ws.onmessage = (messageEvent) => {
+                    var data = JSON.parse(messageEvent.data);
+
+                    // Drop any event where u is <= lastUpdateId in the snapshot.
+                    if (data.u > this.getLastUpdateId) {
+                        this.$core.observer.publish('diff-change', {ws, data});
+                    }
+                };
+            }
         },
         created() {
             this.updateActiveSymbol(this.$store.state.activeSymbol);

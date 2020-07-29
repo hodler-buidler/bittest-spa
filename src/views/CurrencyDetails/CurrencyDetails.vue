@@ -16,7 +16,11 @@
             </div>
 
             <div>
-                <symbol-diff-changes />
+                <symbol-diff-changes @data-exists='handleDiffExistsEvent' />
+            </div>
+
+            <div v-if="!isDiffHistoryExists">
+                <span>No symbol data loaded yet, so no differences appear.</span>
             </div>
         </div>
     </div>
@@ -29,9 +33,16 @@
     export default {
         name: "CryptoInfoChoice",
         components: {CurrencySelect, SymbolDiffChanges},
-        created() {
-
-        }
+        data() {
+            return {
+                isDiffHistoryExists: false,
+            }
+        },
+        methods: {
+            handleDiffExistsEvent(isDiffExists) {
+                this.isDiffHistoryExists = isDiffExists;
+            },
+        },
     }
 </script>
 

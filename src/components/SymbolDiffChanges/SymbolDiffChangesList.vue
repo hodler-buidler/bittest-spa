@@ -1,9 +1,9 @@
 <template>
     <ul class="changes-list">
         <li class="changes-list__item">
-            <span class="field-name">Quantity</span> from&nbsp;0.0000230230 to&nbsp;0.034000324230423
+            <span class="field-name">Quantity:</span> {{ quantity }}
             <br />
-            <span class="field-name">Price</span> from&nbsp;0.0000230230 to&nbsp;0.034000324230423
+            <span class="field-name">Price:</span> {{ price }}
         </li>
     </ul>
 </template>
@@ -11,6 +11,21 @@
 <script>
     export default {
         name: 'SymbolDiffChangesList',
+        props: {
+            entity: {
+                type: Array,
+                required: true,
+            },
+        },
+        computed: {
+            price() {
+                return this.entity[0];
+            },
+
+            quantity() {
+                return this.entity[1];
+            },
+        }
     }
 </script>
 

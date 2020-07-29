@@ -17,6 +17,14 @@ export default new Vuex.Store({
       return state.symbolData !== null;
     },
 
+    getLastUpdateId: (state) => {
+      if (state.symbolData) {
+        return state.symbolData.lastUpdateId;
+      }
+      
+      return null;
+    },
+
     getAsks: (state) => {
       if (state.symbolData) {
         return state.symbolData.asks;
