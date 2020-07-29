@@ -50,7 +50,7 @@ export default new Vuex.Store({
     },
 
     isDiffStreamActive: (state) => {
-      return state.diffStreamConnection && (state.diffStreamConnection.readyState == 1);
+      return state.diffStreamConnection && (state.diffStreamConnection.readyState <= 1);
     },
 
     isFirstProcessedDiffEvent: (state) => {
@@ -136,7 +136,9 @@ export default new Vuex.Store({
       context.commit(SET_PREV_PROCESSED_DIFF_DATA, null);
     },
     publishDiffUpdates({commit, state, getters, dispatch}, core) {
+      console.log("PASSED 1");
       if (getters.isDiffStreamActive && getters.isSymbolDataInitialized) {
+        console.log("PASSED 2");
         state.diffStreamConnection.onmessage = (messageEvent) => {
           var data = JSON.parse(messageEvent.data);
 

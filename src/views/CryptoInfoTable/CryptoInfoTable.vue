@@ -52,6 +52,10 @@
                 if (!this.isSymbolDataInitialized) {
                     let symbolData = await this.$core.sdk.getOrdersBook(this.activeSymbol);
                     if (symbolData) this.setSymbolData(symbolData);
+                    else {
+                        this.$toast.error("Symbol data hasn't loaded.");
+                        return;
+                    }
 
                     this.publishDiffUpdates(this.$core);
                 }
@@ -69,6 +73,11 @@
                 // To create only one connection corresponding to grabbed data
                 if (!this.isSymbolDataInitialized) {
                     var ws = this.$core.sdk.getOrdersWebsocketInstance(this.$store.state.activeSymbol);
+
+                    ws.onerror = (e) => {
+                        this.$toast.error('Something wrong with Websocket connection');
+                    };
+
                     this.setDiffStream(ws);
                 }
             },
