@@ -43,6 +43,8 @@
             ...mapActions([
                 'setSymbolData',
                 'setActiveSymbol',
+                'setDiffStream',
+                'publishDiffUpdates',
             ]),
 
             async loadSymbolData() {
@@ -50,7 +52,8 @@
                 if (!this.isSymbolDataInitialized) {
                     let symbolData = await this.$core.sdk.getOrdersBook(this.activeSymbol);
                     if (symbolData) this.setSymbolData(symbolData);
-                    this.runWebsocketStream();
+
+                    this.publishDiffUpdates(this.$core);
                 }
                 this.isDataLoaded = true;
             },
@@ -62,20 +65,16 @@
                 }
             },
 
-            runWebsocketStream() {
-                var ws = this.$core.sdk.getOrdersWebsocketInstance(this.activeSymbol);
-
-                ws.onmessage = (messageEvent) => {
-                    var data = JSON.parse(messageEvent.data);
-
-                    // Drop any event where u is <= lastUpdateId in the snapshot.
-                    if (data.u > this.getLastUpdateId) {
-                        this.$core.observer.publish('diff-change', {ws, data});
-                    }
-                };
-            }
+            initSocketStream() {
+                // To create only one connection corresponding to grabbed data
+                if (!this.isSymbolDataInitialized) {
+                    var ws = this.$core.sdk.getOrdersWebsocketInstance(this.$store.state.activeSymbol);
+                    this.setDiffStream(ws);
+                }
+            },
         },
         created() {
+            this.initSocketStream();
             this.updateActiveSymbol(this.$store.state.activeSymbol);
 
             this.$core.observer.subscribe(
