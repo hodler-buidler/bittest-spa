@@ -1,4 +1,6 @@
-# bittest-spa
+# Binance Data Socket Fetcher
+
+DEMO: https://hodler-buidler.github.io/crypto
 
 ## Project setup
 ```
