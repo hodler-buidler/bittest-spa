@@ -1,12 +1,3 @@
-# Моё тестовое задание на должность Junior Front-end Developer.
-
-Demo: https://nikitosgolubev.github.io/crypto
-
-Что можно улучшить:
-1) Тестирование, e2e тесты.
-2) SSR
-
-
 # bittest-spa
 
 ## Project setup
