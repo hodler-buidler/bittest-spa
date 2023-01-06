@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.4.0",
-    "@vue/cli-service": "^4.4.0",
+    "@vue/cli-service": "^5.0.8",
     "local-cors-proxy": "^1.1.0",
     "path": "^0.12.7",
     "sass": "^1.26.5",
